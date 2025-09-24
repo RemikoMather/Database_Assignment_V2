@@ -1,1 +1,186 @@
-﻿ERD Description
+Entity Relationship Diagram (ERD) for University Database
+===========================================================
+
+This file describes the ERD structure for the normalized university database.
+Use this description to create the ERD.png file using any ERD tool like:
+- Draw.io (diagrams.net)
+- Lucidchart
+- MySQL Workbench
+- ER/Studio
+- Or any other ERD software
+
+ENTITIES AND ATTRIBUTES:
+========================
+
+1. DEPARTMENTS
+   - DepartmentID (PK) [INT]
+   - DepartmentName [VARCHAR(100)]
+   - DepartmentHead [VARCHAR(100)]
+
+2. INSTRUCTORS
+   - InstructorID (PK) [INT]
+   - FirstName [VARCHAR(50)]
+   - LastName [VARCHAR(50)]
+   - Email [VARCHAR(100)]
+   - DepartmentID (FK) [INT]
+
+3. STUDENTS
+   - StudentID (PK) [INT]
+   - FirstName [VARCHAR(50)]
+   - LastName [VARCHAR(50)]
+   - Email [VARCHAR(100)]
+   - Major [VARCHAR(100)]
+   - GPA [DECIMAL(3,2)]
+   - EnrollmentDate [DATE]
+
+4. COURSES
+   - CourseID (PK) [VARCHAR(10)]
+   - CourseName [VARCHAR(100)]
+   - Credits [INT]
+   - InstructorID (FK) [INT]
+
+5. ENROLLMENTS (Junction Table)
+   - StudentID (PK, FK) [INT]
+   - CourseID (PK, FK) [VARCHAR(10)]
+   - EnrollmentDate [DATE]
+   - Grade [VARCHAR(2)]
+
+RELATIONSHIPS:
+==============
+
+1. DEPARTMENTS ||--o{ INSTRUCTORS
+   - One department can have many instructors
+   - Each instructor belongs to one department
+   - Relationship: One-to-Many
+   - Foreign Key: Instructors.DepartmentID → Departments.DepartmentID
+
+2. INSTRUCTORS ||--o{ COURSES
+   - One instructor can teach many courses
+   - Each course is taught by one instructor
+   - Relationship: One-to-Many
+   - Foreign Key: Courses.InstructorID → Instructors.InstructorID
+
+3. STUDENTS }o--o{ COURSES (via ENROLLMENTS)
+   - Many students can enroll in many courses
+   - Many courses can have many students
+   - Relationship: Many-to-Many (resolved through junction table)
+   - Junction Table: ENROLLMENTS
+   - Foreign Keys: 
+     * Enrollments.StudentID → Students.StudentID
+     * Enrollments.CourseID → Courses.CourseID
+
+ASCII ERD REPRESENTATION:
+=========================
+
+┌─────────────────┐
+│   DEPARTMENTS   │
+├─────────────────┤
+│ DepartmentID(PK)│
+│ DepartmentName  │
+│ DepartmentHead  │
+└─────────────────┘
+         │
+         │ 1:M
+         ▼
+┌─────────────────┐
+│   INSTRUCTORS   │
+├─────────────────┤
+│ InstructorID(PK)│
+│ FirstName       │
+│ LastName        │
+│ Email           │
+│ DepartmentID(FK)│
+└─────────────────┘
+         │
+         │ 1:M
+         ▼
+┌─────────────────┐
+│    COURSES      │
+├─────────────────┤
+│ CourseID (PK)   │
+│ CourseName      │
+│ Credits         │
+│ InstructorID(FK)│
+└─────────────────┘
+         │
+         │ M:N
+         ▼
+┌─────────────────┐       ┌─────────────────┐
+│   ENROLLMENTS   │◄─────►│    STUDENTS     │
+├─────────────────┤       ├─────────────────┤
+│ StudentID(PK,FK)│       │ StudentID (PK)  │
+│ CourseID(PK,FK) │       │ FirstName       │
+│ EnrollmentDate  │       │ LastName        │
+│ Grade           │       │ Email           │
+└─────────────────┘       │ Major           │
+                          │ GPA             │
+                          │ EnrollmentDate  │
+                          └─────────────────┘
+
+CARDINALITY NOTATION:
+====================
+│ = One
+o = Zero
+{ = Many
+|| = One (mandatory)
+o{ = Zero or Many
+}o = Many or Zero
+
+DETAILED RELATIONSHIP DESCRIPTIONS:
+===================================
+
+1. Department-Instructor Relationship:
+   - Type: One-to-Many
+   - Description: Each department can have multiple instructors, but each instructor belongs to exactly one department
+   - Business Rule: An instructor must be assigned to a department
+
+2. Instructor-Course Relationship:
+   - Type: One-to-Many
+   - Description: Each instructor can teach multiple courses, but each course is taught by exactly one instructor
+   - Business Rule: A course must have an assigned instructor
+
+3. Student-Course Relationship (via Enrollments):
+   - Type: Many-to-Many
+   - Description: Students can enroll in multiple courses, and courses can have multiple students
+   - Business Rule: The enrollment relationship tracks when a student enrolled and their grade
+   - Junction Table: ENROLLMENTS resolves the many-to-many relationship
+
+NORMALIZATION BENEFITS SHOWN IN ERD:
+====================================
+
+1. First Normal Form (1NF):
+   - All attributes contain atomic values
+   - No repeating groups
+
+2. Second Normal Form (2NF):
+   - All non-key attributes are fully dependent on primary keys
+   - Partial dependencies eliminated through table decomposition
+
+3. Third Normal Form (3NF):
+   - No transitive dependencies
+   - Instructor information separated from course information
+   - Department information separated from instructor information
+
+INSTRUCTIONS FOR CREATING ERD.PNG:
+==================================
+
+1. Use any ERD diagramming tool
+2. Create 5 entity boxes as described above
+3. Add all attributes with proper data types
+4. Mark primary keys (PK) and foreign keys (FK)
+5. Draw relationship lines between entities
+6. Add cardinality notation (1:1, 1:M, M:N)
+7. Use crow's foot notation or similar for relationships
+8. Save as ERD.png in the project directory
+
+RECOMMENDED LAYOUT:
+==================
+- Place DEPARTMENTS at the top
+- INSTRUCTORS below DEPARTMENTS
+- COURSES below INSTRUCTORS
+- STUDENTS on the right side
+- ENROLLMENTS in the center connecting STUDENTS and COURSES
+
+This creates a clean, logical flow showing the hierarchical relationships
+and the many-to-many relationship resolution.
+
